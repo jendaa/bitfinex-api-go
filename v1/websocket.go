@@ -316,10 +316,18 @@ func (w *WebSocketService) ConnectPrivate(ch chan TermData) {
 				if len(data) == 2 { // Heartbeat
 					// XXX: Consider adding a switch to enable/disable passing these along.
 					ch <- TermData{Term: data[1].(string)}
-					return
+					// edit by jenda
+					continue
 				}
 
 				dataTerm := data[1].(string)
+				// edit by jenda
+				// hb sometimes sends third parameter float64, retyping of data[2] then explodes
+				if dataTerm == "hb" {
+					ch <- TermData{Term: data[1].(string)}
+					continue
+				}
+
 				dataList := data[2].([]interface{})
 
 				// check for empty data
